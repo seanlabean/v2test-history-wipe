@@ -2,4 +2,8 @@ initial commit
 
 another commit.
 
-commit after first-pr.
+<<<<<<< HEAD
+making a conflict. commit after first-pr.
+=======
+dev conflict! commit after first-pr.
+>>>>>>> dev
