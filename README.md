@@ -1,4 +1,3 @@
-initial commit
 
 another commit.
 
