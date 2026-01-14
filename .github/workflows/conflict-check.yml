@@ -1,0 +1,18 @@
+name: "Block Merge Conflict Markers"
+on: [pull_request]
+
+jobs:
+  check-markers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for conflict markers
+        run: |
+          # Search for standard Git conflict markers
+          if grep -rnE "<<<<<<<|=======|>>>>>>>" . --exclude-dir=.git; then
+            echo "❌ ERROR: Merge conflict markers found in the files listed above."
+            echo "Please resolve these manually before merging."
+            exit 1
+          else
+            echo "✅ No conflict markers found."
+          fi
