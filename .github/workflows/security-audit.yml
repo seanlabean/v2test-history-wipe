@@ -32,4 +32,4 @@ jobs:
 
       - name: Verify Notebooks are Stripped
         # This will fail the build if any notebook has saved outputs
-        run: nbstripout --is-stripped **/*.ipynb
+        run: nbstripout --verify **/*.ipynb
