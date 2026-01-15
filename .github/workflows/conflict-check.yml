@@ -1,4 +1,4 @@
-name: "Block Merge Conflict Markers"
+name: "Conflict Guard"
 on: [pull_request]
 
 jobs:
@@ -6,13 +6,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check for conflict markers
+      
+      - name: Robust Conflict Check
         run: |
-          # Search for standard Git conflict markers
-          if grep -rnE "<<<<<<<|=======|>>>>>>>" . --exclude-dir=.git; then
-            echo "❌ ERROR: Merge conflict markers found in the files listed above."
-            echo "Please resolve these manually before merging."
+          ERRORS=0
+
+          # Check 1: Look for the breadcrumb file created by the script
+          if [ -f .migration_conflict ]; then
+            echo "❌ ERROR: This branch was flagged during migration for a complex conflict (e.g. Deleted vs Modified)."
+            cat .migration_conflict
+            ERRORS=1
+          fi
+
+          # Check 2: Look for standard markers
+          if grep -rnE "<<<<<<<|=======|>>>>>>>" . --exclude-dir=.git --exclude=.migration_conflict; then
+            echo "❌ ERROR: Standard merge conflict markers found."
+            ERRORS=1
+          fi
+
+          if [ $ERRORS -eq 1 ]; then
             exit 1
           else
-            echo "✅ No conflict markers found."
+            echo "✅ No conflicts detected."
           fi
